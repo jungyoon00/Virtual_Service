@@ -21,10 +21,11 @@ cap.set(4, hCam)
 detector = HandDetector(maxHands=1)
 wScr, hScr = pyautogui.size()
 
+pressInterval = 0.2
 
-keys = [["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-        ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
-        ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]]
+keys = [["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "\\"],
+        ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "!", "?"]]
 finalText = ""
 
 def drawAll(img, buttonList):
@@ -49,10 +50,11 @@ for i in range(len(keys)):
     for j, key in enumerate(keys[i]):
         buttonList.append(Button([100 * j + 50, 100 * i + 50], key))
 
-backspace = Button([100 * (len(keys)+1) + 350, 100 * (len(keys)) + 55], "<")
-factorial = Button([100 * (len(keys)+1) + 500, 100 * (len(keys)) + 55], "!")
+backspace = Button([100 * (len(keys) + 1) + 350, 100 * (len(keys)) + 55], "<")
+expert = Button([100 * (len(keys) + 1) + 450, 100 * (len(keys)) + 55], "[->]", [170, 85])
 
 buttonList.append(backspace)
+buttonList.append(expert)
 
 mode = False
 while True:
@@ -120,24 +122,30 @@ while True:
                     l, _, _ = detector.findDistance(8, 12, img, draw=False)
     
                     # when clicked
-                    if l < 30:
+                    if l < 40:
                         if button.text == "<":
                             finalText = finalText[0:len(finalText)-1]
                             continue
-                        print(button.text)
+                        elif button.text == "[->":
+                            print(f"[Expert Text]: '{finalText}'")
+                            continue
+                        print(f"[Press Keyboard]: {button.text} (Interval: {pressInterval})")
                         keyboard.press(button.text)
                         cv2.rectangle(img, button.pos, (x + w, y + h), (0, 255, 0), cv2.FILLED)
                         cv2.putText(img, button.text, (x + 20, y + 65),
                                     cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 4)
                         finalText += button.text
-                        time.sleep(0.2)
+
+                        if len(finalText) > 15:
+                            finalText = finalText[:15]
+                        time.sleep(pressInterval)
     
         cv2.rectangle(img, (50, 350), (700, 450), (175, 0, 175), cv2.FILLED)
         cv2.putText(img, finalText, (60, 430),
                     cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
     
     #===========================================================================#
-    
+
     # 11. Frame Rate
     cTime = time.time()
     fps = 1 / (cTime - pTime)
