@@ -50,6 +50,7 @@ for i in range(len(keys)):
         buttonList.append(Button([100 * j + 50, 100 * i + 50], key))
 
 backspace = Button([100 * (len(keys)+1) + 350, 100 * (len(keys)) + 55], "<")
+factorial = Button([100 * (len(keys)+1) + 500, 100 * (len(keys)) + 55], "!")
 
 buttonList.append(backspace)
 
@@ -136,12 +137,12 @@ while True:
                     cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
     
     #===========================================================================#
-
+    
     # 11. Frame Rate
     cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime
-    cv2.putText(img, "Frame: "+str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 3)
+    cv2.putText(img, "Frame: "+str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
     # 12. Display
     cv2.imshow("Image", img)
