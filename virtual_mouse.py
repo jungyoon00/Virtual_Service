@@ -9,6 +9,7 @@ from pynput.keyboard import Controller
 wCam, hCam = 1280, 720
 frameR = 100  # Frame Reduction
 smoothening = 7
+pressInterval = 0.01
 ##########################
 
 pTime = 0
@@ -20,8 +21,6 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 detector = HandDetector(maxHands=1)
 wScr, hScr = pyautogui.size()
-
-pressInterval = 0.2
 
 keys = [["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
         ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "\\"],
@@ -52,13 +51,12 @@ for i in range(len(keys)):
 
 backspace = Button([100 * (len(keys) + 1) + 350, 100 * (len(keys)) + 55], "<")
 expert = Button([100 * (len(keys) + 1) + 450, 100 * (len(keys)) + 55], "[->", [170, 85])
-
 buttonList.append(backspace)
 buttonList.append(expert)
 
 def expertWords(text):
     pyautogui.countdown(3)
-    pyautogui.typewrite(text, interval=0.01)
+    pyautogui.alert(text)
 
 mode = False
 while True:
@@ -106,12 +104,20 @@ while True:
                 length, img, lineInfo = detector.findDistance(8, 12, img)
     
                 # 10. Click mouse if distance short
-                if length < 40:
+                if length < 45:
                     cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
                     pyautogui.click()
             
             if fingers[0] == 1 and fingers[1] == 1 and fingers[2] == 0:
-                pass
+                
+                length, _, _ = detector.findDistance(4, 8, img)
+
+                if length > 100:
+                    pyautogui.press("volumeup")
+                    print("&[Volume Up]")
+                elif length <= 100:
+                    pyautogui.press("volumedown")
+                    print("&[Volume Down]")
     else:
         img = drawAll(img, buttonList)
         if lmList:
@@ -126,8 +132,11 @@ while True:
                     l, _, _ = detector.findDistance(8, 12, img, draw=False)
     
                     # when clicked
-                    if l < 32:
+                    if l < 35:
                         if button.text == "<":
+                            if len(finalText) == 0:
+                                continue
+                            print(f"&[Delete Text]: del {finalText[-1]}")
                             finalText = finalText[0:len(finalText)-1]
                             continue
                         elif button.text == "[->":
@@ -161,9 +170,9 @@ while True:
     cv2.imshow("Image", img)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
-    elif cv2.waitKey(1) & 0xFF == ord("m"):
+    if cv2.waitKey(1) & 0xFF == ord("m"):
         mode = True
-    elif cv2.waitKey(1) & 0xFF == ord("k"):
+    if cv2.waitKey(1) & 0xFF == ord("k"):
         mode = False
 
 cap.release()
