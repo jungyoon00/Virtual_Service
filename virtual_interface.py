@@ -62,6 +62,7 @@ mode = False
 while True:
     # 1. Find hand Landmarks
     success, img = cap.read()
+    img = cv2.flip(img, 1)
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
 
@@ -108,7 +109,7 @@ while True:
                     cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
                     pyautogui.click()
             
-            if fingers[0] == 1 and fingers[1] == 1 and fingers[2] == 0:
+            if fingers[0] == 1 and fingers[1] == 1 and fingers[2] == 0 and fingers[4] == 1:
                 
                 length, _, _ = detector.findDistance(4, 8, img)
 
