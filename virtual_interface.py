@@ -50,11 +50,11 @@ for i in range(len(keys)):
         buttonList.append(Button([100 * j + 50, 100 * i + 50], key))
 
 backspace = Button([100 * (len(keys) + 1) + 350, 100 * (len(keys)) + 55], "<")
-expert = Button([100 * (len(keys) + 1) + 450, 100 * (len(keys)) + 55], "[->", [170, 85])
+export = Button([100 * (len(keys) + 1) + 450, 100 * (len(keys)) + 55], "[->", [170, 85])
 buttonList.append(backspace)
-buttonList.append(expert)
+buttonList.append(export)
 
-def expertWords(text):
+def exportWords(text):
     pyautogui.countdown(3)
     pyautogui.alert(text)
 
@@ -141,8 +141,8 @@ while True:
                             finalText = finalText[0:len(finalText)-1]
                             continue
                         elif button.text == "[->":
-                            print(f"&[Expert Text]: '{finalText}'")
-                            expertWords(finalText)
+                            print(f"&[export Text]: '{finalText}'")
+                            exportWords(finalText)
                             continue
                         print(f"[Press Keyboard]: {button.text} (Interval: {pressInterval})")
                         keyboard.press(button.text)
