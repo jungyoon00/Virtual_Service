@@ -62,7 +62,10 @@ mode = False
 while True:
     # 1. Find hand Landmarks
     success, img = cap.read()
-    img = cv2.flip(img, 1)
+    if mode:
+        pass
+    else:
+        img = cv2.flip(img, 1)
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
 
@@ -83,7 +86,7 @@ while True:
         )
         if len(fingers) > 0:
             # 4. Only Index Finger : Moving Mode
-            if fingers[0] == 0 and fingers[1] == 1 and fingers[2] == 0:
+            if fingers[1] == 1 and fingers[2] == 0:
     
                 # 5. Convert Coordinates
                 x_ = np.interp(x1, (frameR, wCam - frameR), (0, wScr))
@@ -99,7 +102,7 @@ while True:
                 plocX, plocY = clocX, clocY
     
             # 8. Both Index and middle fingers are up : Clicking Mode
-            if fingers[0] == 0 and fingers[1] == 1 and fingers[2] == 1:
+            if fingers[1] == 1 and fingers[2] == 1:
     
                 # 9. Find distance between fingers
                 length, img, lineInfo = detector.findDistance(8, 12, img)
@@ -109,16 +112,17 @@ while True:
                     cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
                     pyautogui.click()
             
-            if fingers[0] == 1 and fingers[1] == 1 and fingers[2] == 0 and fingers[4] == 1:
+            if fingers[0] == 1 and fingers[1] == 1 and fingers[4] == 1:
                 
                 length, _, _ = detector.findDistance(4, 8, img)
 
-                if length > 100:
-                    pyautogui.press("volumeup")
-                    print("&[Volume Up]")
-                elif length <= 100:
-                    pyautogui.press("volumedown")
-                    print("&[Volume Down]")
+                if cv2.waitKey(1) & 0xFF == ord("v"):
+                    if length > 100:
+                        pyautogui.press("volumeup")
+                        print("&[Volume Up]")
+                    elif length <= 100:
+                        pyautogui.press("volumedown")
+                        print("&[Volume Down]")
     else:
         img = drawAll(img, buttonList)
         if lmList:
